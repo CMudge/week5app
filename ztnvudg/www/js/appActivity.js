@@ -64,5 +64,5 @@ function trackLocation() {
 function showPosition(position) {
 		L.marker([position.coords.latitude, position.coords.longitude]).addTo(mymap)
 			.bindPopup("<b>Position</b><br />Latitude: " + position.coords.latitude + "<br>Longitude: " + position.coords.longitude).openPopup();
-			mymap.fitBounds(showPosition.getBounds());
+			mymap.flyTo([position.coords.latitude, position.coords.longitude], 6);
 }
