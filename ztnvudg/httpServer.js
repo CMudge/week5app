@@ -21,6 +21,14 @@ for (var i = 0; i < configarray.length; i++) {
 var pg = require('pg');
 var pool = new pg.Pool(config);
 
+// adding functionality to allow cross-domain queries when PhoneGap is running a server
+app.use(function(req, res, next) {
+	res.setHeader("Access-Control-Allow-Origin", "*");
+	res.setHeader("Access-Control-Allow-Headers", "X-Requested-With");
+	res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+	next();
+});
+
 
 app.get('/getPOI', function (req,res) {
 	pool.connect(function(err,client,done) {
@@ -56,14 +64,6 @@ app.get('/getPOI', function (req,res) {
 
 
 
-
-	// adding functionality to allow cross-domain queries when PhoneGap is running a server
-	app.use(function(req, res, next) {
-		res.setHeader("Access-Control-Allow-Origin", "*");
-		res.setHeader("Access-Control-Allow-Headers", "X-Requested-With");
-		res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-		next();
-	});
 
 	
 	// adding functionality to log the requests
