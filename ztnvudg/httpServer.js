@@ -1,6 +1,7 @@
 // express is the server that forms part of the nodejs program
 var express = require('express');
 var path = require("path");
+var fs = require("fs");
 var app = express();
 
 	// adding functionality to allow cross-domain queries when PhoneGap is running a server
@@ -44,8 +45,8 @@ var app = express();
              // use string_agg to generate a comma separated list that can then be pasted into the next query
              var querystring = "select string_agg(colname,',') from ( select column_name as colname ";
 			 querystring = querystring + " FROM information_schema.columns as colname ";
-             querystring = querystring + " where table_name<>'"+req.params.tablename +"'";
-             querystring = querystring + " and column_name<>'"+req.params.geomcolumn+"') as cols ";
+             querystring = querystring + " where table_name = '"+req.params.tablename +"'";
+             querystring = querystring + " and column_name <> '"+req.params.geomcolumn+"') as cols ";
              console.log(querystring);
 
 			 
@@ -68,8 +69,7 @@ var app = express();
 // now use the inbuilt geoJSON functionality
 // and create the required geoJSON format using a query adapted from
              // http://www.postgresonline.com/journal/archives/267-Creating-GeoJSON-Feature-Collections-with-JSON-and-PostGIS-functions.html, accessed 4th January 2018
-             // note that query needs to be a single string with no line breaks so
-build it up bit by bit
+             // note that query needs to be a single string with no line breaks so build it up bit by bit
              var querystring = " SELECT 'FeatureCollection' As type, array_to_json(array_agg(f)) As features  FROM ";
              querystring = querystring + "(SELECT 'Feature' As type     ,ST_AsGeoJSON(lg." + req.params.geomcolumn+")::json As geometry, ";
 			 querystring = querystring + "row_to_json((SELECT l FROM (SELECT "+colnames + ") As l      )) As properties";
