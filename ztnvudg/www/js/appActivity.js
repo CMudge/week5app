@@ -92,3 +92,38 @@ function processDivChange() {
 			document.getElementById('ajaxtest').innerHTML = xhr.responseText;
 	}
 }
+
+
+	var poilayer;
+	
+	// create the code to get the POI data using an XMLHttpRequest
+	function getPoi() {
+		client = new XMLHttpRequest();
+
+	client.open('GET','http://developer.cege.ucl.ac.uk:30266/getPOI');
+		client.onreadystatechange = poiResponse;
+		// note don't use poiResponse() with brackets as that doesn't work
+		client.send();
+	}
+	
+	/* create the code to wait for the response from the data server, and process the response once 
+	it is received */
+	function poiResponse() {
+		// this function listens out for the server to say that the data is ready - i.e. has state 4
+		if (client.readyState == 4) {
+			// once the data is ready, process the data
+			var poidata = client.responseText;
+			loadPoilayer(poidata);
+			}
+	}
+	// convert the received data - which is text - to JSON format and add it to the map
+	function loadPoilayer(poidata) {
+		// add the JSON layer onto the map - it will appear using the default icons
+		var poilayer = L.geoJson(poidata).addTo(mymap);
+		// change the map zoom so that all the data is shown
+		mymap.fitBounds(poilayer.getBounds());
+	}
+
+	
+
+	
